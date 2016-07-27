@@ -6,37 +6,27 @@ import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.Rect;
-import android.graphics.Typeface;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.v4.app.NavUtils;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ShareCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
-
-import java.util.function.ToLongBiFunction;
-
 /**
  * A fragment representing a single Article detail screen. This fragment is
  * either contained in a {@link ArticleListActivity} in two-pane mode (on
@@ -52,7 +42,7 @@ public class ArticleDetailFragment extends Fragment implements
     private long mItemId;
     private View mRootView;
     private CollapsingToolbarLayout collapsingToolbarLayout;
-
+    private FloatingActionButton fab;
     private ImageView mPhotoView;
     private TextView bylineView;
     private TextView bodyView;
@@ -98,8 +88,11 @@ public class ArticleDetailFragment extends Fragment implements
             Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.fragment_article_detail, container, false);
         collapsingToolbarLayout = (CollapsingToolbarLayout) mRootView.findViewById(R.id.collapsing_toolbar);
-
+        bylineView = (TextView) mRootView.findViewById(R.id.article_byline);
+        bylineView.setMovementMethod(new LinkMovementMethod());
+        bodyView = (TextView) mRootView.findViewById(R.id.article_body);
         mPhotoView = (ImageView) mRootView.findViewById(R.id.photo);
+        fab = (FloatingActionButton) mRootView.findViewById(R.id.share_fab);
 
         Toolbar toolbar = (Toolbar) mRootView.findViewById(R.id.toolbar);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
@@ -108,16 +101,6 @@ public class ArticleDetailFragment extends Fragment implements
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        mRootView.findViewById(R.id.share_fab).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(Intent.createChooser(ShareCompat.IntentBuilder.from(getActivity())
-                        .setType("text/plain")
-                        .setText("Some sample text")
-                        .getIntent(), getString(R.string.action_share)));
-            }
-        });
-
         return mRootView;
     }
 
@@ -125,10 +108,6 @@ public class ArticleDetailFragment extends Fragment implements
         if (mRootView == null) {
             return;
         }
-
-        bylineView = (TextView) mRootView.findViewById(R.id.article_byline);
-        bylineView.setMovementMethod(new LinkMovementMethod());
-        bodyView = (TextView) mRootView.findViewById(R.id.article_body);
 
         if (mCursor != null) {
             mRootView.setAlpha(0);
@@ -158,6 +137,16 @@ public class ArticleDetailFragment extends Fragment implements
 
                         }
                     });
+
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    startActivity(Intent.createChooser(ShareCompat.IntentBuilder.from(getActivity())
+                            .setType("text/plain")
+                            .setText(mCursor.getString(ArticleLoader.Query.TITLE))
+                            .getIntent(), getString(R.string.action_share)));
+                }
+            });
         } else {
             mRootView.setVisibility(View.GONE);
             collapsingToolbarLayout.setTitle("N/A");
