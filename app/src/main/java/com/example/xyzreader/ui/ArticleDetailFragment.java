@@ -54,6 +54,8 @@ public class ArticleDetailFragment extends Fragment implements
     private CollapsingToolbarLayout collapsingToolbarLayout;
 
     private ImageView mPhotoView;
+    private TextView bylineView;
+    private TextView bodyView;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -99,12 +101,12 @@ public class ArticleDetailFragment extends Fragment implements
 
         mPhotoView = (ImageView) mRootView.findViewById(R.id.photo);
 
-        /*Toolbar toolbar = (Toolbar) mRootView.findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) mRootView.findViewById(R.id.toolbar);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
         if(actionBar != null){
             actionBar.setDisplayHomeAsUpEnabled(true);
-        }*/
+        }
 
         mRootView.findViewById(R.id.share_fab).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -116,7 +118,6 @@ public class ArticleDetailFragment extends Fragment implements
             }
         });
 
-        bindViews();
         return mRootView;
     }
 
@@ -125,16 +126,9 @@ public class ArticleDetailFragment extends Fragment implements
             return;
         }
 
-        Toolbar toolbar = (Toolbar) mRootView.findViewById(R.id.toolbar);
-        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-        if(actionBar != null){
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
-
-        TextView bylineView = (TextView) mRootView.findViewById(R.id.article_byline);
+        bylineView = (TextView) mRootView.findViewById(R.id.article_byline);
         bylineView.setMovementMethod(new LinkMovementMethod());
-        TextView bodyView = (TextView) mRootView.findViewById(R.id.article_body);
+        bodyView = (TextView) mRootView.findViewById(R.id.article_body);
 
         if (mCursor != null) {
             mRootView.setAlpha(0);
